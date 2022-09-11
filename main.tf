@@ -33,6 +33,15 @@ resource "google_compute_subnetwork" "default" {
   private_ip_google_access = true
 }
 
+
+data "google_client_config" "current" {
+}
+
+data "google_container_engine_versions" "default" {
+  location = var.location
+}
+
+
 resource "google_container_node_pool" "np" {
   name       = "my-node-pool"
   cluster    = google_container_cluster.primary.id
@@ -54,10 +63,9 @@ resource "google_container_node_pool" "np" {
 resource "google_container_cluster" "primary" {
   name               = var.network_name
   location           = var.location
-
-  node_locations = [
-    "us-central1-c",
-  ]
+  min_master_version = data.google_container_engine_versions.default.latest_master_version
+  network            = google_compute_subnetwork.default.name
+  subnetwork         = google_compute_subnetwork.default.name
 
   node_config {
     service_account = "service-account@axial-studio-335217.iam.gserviceaccount.com"
