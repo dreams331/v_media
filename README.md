@@ -3,26 +3,28 @@
 Install Terraform
 Install Terraform if it is not already installed (visit terraform.io for other distributions):
 ../terraform-install.sh
+
 Set up the environment
 Set the project, replace YOUR_PROJECT with your project ID:
 PROJECT=YOUR_PROJECT
 gcloud config set project ${PROJECT}
+
+
 Configure the environment for Terraform:
 [[ $CLOUD_SHELL ]] || gcloud auth application-default login
 export GOOGLE_PROJECT=$(gcloud config get-value project)
+
+
 Run Terraform
-terraform init
-terraform apply
-Testing
-Wait for the load balancer to be provisioned:
-./test.sh
-Verify response from load balancer:
-curl http://$(terraform output load-balancer-ip)
-Connecting with kubectl
-Get the cluster credentials and configure kubectl:
-gcloud container clusters get-credentials $(terraform output cluster_name) --zone $(terraform output cluster_zone)
-Verify kubectl connectivity:
-kubectl get pods -n staging
-Cleanup
-Delete resources created by terraform:
-terraform destroy
+terraform init: 
+To initialize a working directory containing Terraform configuration files.
+
+terraform Plan: 
+To evaluates the Terraform configuration to determine the desired state of all the resources that it declares, then compares that desired state to the real infrastructure objects being managed with the current working directory and workspace.
+
+terraform apply: 
+To performs a plan just like terraform plan does, but then actually carries out the planned changes/create to each resource using the relevant infrastructure provider's API
+
+
+terraform destroy:
+To delete resources created by terraform:
