@@ -18,6 +18,7 @@ provider "google" {
 resource "google_service_account" "v_media_service_account" {
   account_id   = "service-account@axial-studio-335217.iam.gserviceaccount.com"
   display_name = "Service Account"
+  project     = "axial-studio-335217"
 }
 
 resource "google_compute_network" "default" {
@@ -33,15 +34,6 @@ resource "google_compute_subnetwork" "default" {
   private_ip_google_access = true
 }
 
-
-data "google_client_config" "current" {
-}
-
-data "google_container_engine_versions" "default" {
-  location = var.location
-}
-
-
 resource "google_container_node_pool" "np" {
   name       = "my-node-pool"
   cluster    = google_container_cluster.primary.id
@@ -49,8 +41,10 @@ resource "google_container_node_pool" "np" {
     machine_type = "e2-medium"
     service_account = "service-account@axial-studio-335217.iam.gserviceaccount.com"
     preemptible  = true
-    min_node_count = 0
-    max_node_count = 4
+  autoscaling {
+    min_node_count = "0"
+    max_node_count = "4"
+  }
     oauth_scopes    = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
@@ -64,7 +58,6 @@ resource "google_container_node_pool" "np" {
 resource "google_container_cluster" "primary" {
   name               = var.network_name
   location           = var.location
-  min_master_version = data.google_container_engine_versions.default.latest_master_version
   network            = google_compute_subnetwork.default.name
   subnetwork         = google_compute_subnetwork.default.name
 
