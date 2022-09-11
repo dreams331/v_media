@@ -48,8 +48,9 @@ resource "google_container_node_pool" "np" {
   node_config {
     machine_type = "e2-medium"
     service_account = "service-account@axial-studio-335217.iam.gserviceaccount.com"
+    preemptible  = true
     min_node_count = 0
-    max_node_count = 3
+    max_node_count = 4
     oauth_scopes    = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
